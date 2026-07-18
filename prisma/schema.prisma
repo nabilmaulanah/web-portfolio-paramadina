@@ -1,0 +1,170 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model user_pengguna {
+  id Int @id @default(autoincrement())
+
+  nama     String @db.VarChar(100)
+  nim      String @unique @db.VarChar(30)
+  prodi    String @db.VarChar(100)
+  angkatan Int
+  email    String @unique @db.VarChar(100)
+  password String @db.VarChar(255)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile     profile?
+  project     project[]
+  skill       skill[]
+  certificate certificate[]
+  experience  experience[]
+
+  // TAMBAHKAN BARIS INI
+  skpi skpi?
+}
+
+model profile {
+  id Int @id @default(autoincrement())
+
+  userId Int @unique
+
+  foto   String? @db.VarChar(255)
+  bio    String? @db.Text
+  alamat String? @db.VarChar(255)
+  no_hp  String? @db.VarChar(20)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user_pengguna user_pengguna @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model project {
+  id Int @id @default(autoincrement())
+
+  userId Int
+
+  title String @db.VarChar(150)
+
+  description String? @db.Text
+
+  github String? @db.VarChar(255)
+
+  demo String? @db.VarChar(255)
+
+  image String? @db.VarChar(255)
+
+  tech_stack String? @db.VarChar(255)
+
+  status String? @default("Progress") @db.VarChar(20)
+
+  createdAt DateTime @default(now())
+
+  user_pengguna user_pengguna @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model skill {
+  id Int @id @default(autoincrement())
+
+  userId Int
+
+  category    String  @db.VarChar(50)
+  nama_skill  String  @db.VarChar(100)
+  level_skill String? @db.VarChar(50)
+
+  createdAt DateTime @default(now())
+
+  user_pengguna user_pengguna @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model certificate {
+  id Int @id @default(autoincrement())
+
+  userId Int
+
+  title String @db.VarChar(150)
+
+  issuer String @db.VarChar(100)
+
+  year String @db.VarChar(10)
+
+  image String? @db.VarChar(255)
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  user_pengguna user_pengguna @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model experience {
+  id Int @id @default(autoincrement())
+
+  userId Int
+
+  jabatan String @db.VarChar(100)
+
+  organisasi String @db.VarChar(150)
+
+  description String? @db.Text
+
+  startDate DateTime @db.Date
+
+  endDate DateTime? @db.Date
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  user_pengguna user_pengguna @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+/**
+ * ===========================
+ * MODEL CONTACT MESSAGE
+ * ===========================
+ */
+
+model contact_message {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(100)
+  email     String   @db.VarChar(100)
+  message   String   @db.Text
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("contact_message")
+}
+
+model skpi {
+  id Int @id @default(autoincrement())
+
+  userId Int @unique
+
+  status String @default("MENUNGGU") @db.VarChar(20)
+
+  filePdf String? @db.VarChar(255)
+
+  catatan String? @db.Text
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  user_pengguna user_pengguna @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
