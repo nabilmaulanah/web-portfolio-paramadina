@@ -20,6 +20,9 @@ export async function GET() {
       angkatan: user.angkatan,
       foto: user.profile?.foto || null,
       bio: user.profile?.bio || null,
+
+      // TAMBAHAN
+      visibility: user.visibility,
     }));
 
     return NextResponse.json(result);
@@ -27,8 +30,12 @@ export async function GET() {
     console.log(error);
 
     return NextResponse.json(
-      { message: "Terjadi kesalahan." },
-      { status: 500 }
+      {
+        message: "Terjadi kesalahan.",
+      },
+      {
+        status: 500,
+      }
     );
   }
 }

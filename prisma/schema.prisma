@@ -17,6 +17,9 @@ model user_pengguna {
   email    String @unique @db.VarChar(100)
   password String @db.VarChar(255)
 
+  // Tambahkan ini
+  visibility String @default("Public") @db.VarChar(20)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -26,7 +29,6 @@ model user_pengguna {
   certificate certificate[]
   experience  experience[]
 
-  // TAMBAHKAN BARIS INI
   skpi skpi?
 }
 

@@ -16,12 +16,15 @@ export default function EditProfilePage() {
   const [no_hp, setNoHp] =
     useState("");
 
+  // TAMBAHAN
+  const [visibility, setVisibility] =
+    useState("Public");
+
   const [foto, setFoto] =
     useState<File | null>(null);
 
   const [preview, setPreview] =
     useState("/default-user.png");
-
 
   useEffect(() => {
 
@@ -37,8 +40,6 @@ export default function EditProfilePage() {
 
   }, []);
 
-
-
   async function loadProfile(id: number) {
 
     const res = await fetch(
@@ -49,13 +50,16 @@ export default function EditProfilePage() {
 
     if (!data) return;
 
-
     setBio(data.bio || "");
 
     setAlamat(data.alamat || "");
 
     setNoHp(data.no_hp || "");
 
+    // TAMBAHAN
+    setVisibility(
+      data.visibility || "Public"
+    );
 
     if (data.foto) {
 
@@ -65,40 +69,38 @@ export default function EditProfilePage() {
 
   }
 
-
-
   async function handleSubmit(e: any) {
 
     e.preventDefault();
 
-
     const formData =
       new FormData();
-
 
     formData.append(
       "userId",
       String(userId)
     );
 
-
     formData.append(
       "bio",
       bio
     );
-
 
     formData.append(
       "alamat",
       alamat
     );
 
-
     formData.append(
       "no_hp",
       no_hp
     );
 
+    // TAMBAHAN
+    formData.append(
+      "visibility",
+      visibility
+    );
 
     if (foto) {
 
@@ -109,8 +111,6 @@ export default function EditProfilePage() {
 
     }
 
-
-
     const res =
       await fetch(
         "/api/profile",
@@ -120,18 +120,14 @@ export default function EditProfilePage() {
         }
       );
 
-
     const data =
       await res.json();
-
-
 
     if (data.success) {
 
       alert(
         "Profile berhasil diperbarui"
       );
-
 
       loadProfile(userId!);
 
@@ -141,15 +137,11 @@ export default function EditProfilePage() {
 
   }
 
-
-
   return (
 
     <div className="min-h-screen bg-gray-100 p-10">
 
-
       <div className="max-w-xl mx-auto bg-white p-8 rounded-xl shadow">
-
 
         <h1 className="text-3xl font-bold mb-6">
 
@@ -157,19 +149,14 @@ export default function EditProfilePage() {
 
         </h1>
 
-
-
         <form
           onSubmit={handleSubmit}
           className="space-y-6"
         >
 
-
-
           {/* FOTO PROFILE */}
 
           <div>
-
 
             <img
               src={preview}
@@ -177,15 +164,9 @@ export default function EditProfilePage() {
               className="w-32 h-32 rounded-full object-cover border mb-4"
             />
 
-
-
             <label className="block font-medium mb-2">
-
               Foto Profile
-
             </label>
-
-
 
             <label
               htmlFor="foto"
@@ -201,90 +182,54 @@ export default function EditProfilePage() {
                 transition
               "
             >
-
               Pilih Foto
-
             </label>
 
-
-
             <input
-
               id="foto"
-
               type="file"
-
               accept="image/*"
-
               className="hidden"
-
               onChange={(e) => {
-
 
                 const file =
                   e.target.files?.[0];
 
-
                 if (!file) return;
 
-
-
                 setFoto(file);
-
-
 
                 setPreview(
                   URL.createObjectURL(file)
                 );
 
-
               }}
-
             />
-
-
 
             {foto && (
 
               <p className="text-sm text-gray-500 mt-2">
-
                 File dipilih: {foto.name}
-
               </p>
 
             )}
 
-
-
           </div>
-
-
-
-
 
           {/* BIO */}
 
           <div>
 
-
             <label className="block font-medium mb-2">
-
               Bio
-
             </label>
 
-
-
             <textarea
-
               rows={5}
-
               value={bio}
-
               onChange={(e) =>
                 setBio(e.target.value)
               }
-
               className="
                 border
                 w-full
@@ -294,37 +239,23 @@ export default function EditProfilePage() {
                 focus:ring-2
                 focus:ring-blue-500
               "
-
             />
 
-
           </div>
-
-
-
-
 
           {/* ALAMAT */}
 
           <div>
 
-
             <label className="block font-medium mb-2">
-
               Alamat
-
             </label>
 
-
-
             <input
-
               value={alamat}
-
               onChange={(e) =>
                 setAlamat(e.target.value)
               }
-
               className="
                 border
                 w-full
@@ -334,37 +265,23 @@ export default function EditProfilePage() {
                 focus:ring-2
                 focus:ring-blue-500
               "
-
             />
 
-
           </div>
-
-
-
-
 
           {/* NO HP */}
 
           <div>
 
-
             <label className="block font-medium mb-2">
-
               No HP
-
             </label>
 
-
-
             <input
-
               value={no_hp}
-
               onChange={(e) =>
                 setNoHp(e.target.value)
               }
-
               className="
                 border
                 w-full
@@ -374,20 +291,50 @@ export default function EditProfilePage() {
                 focus:ring-2
                 focus:ring-blue-500
               "
-
             />
-
 
           </div>
 
+          {/* VISIBILITY */}
 
+          <div>
 
+            <label className="block font-medium mb-2">
+              Visibilitas Portfolio
+            </label>
 
+            <select
+              value={visibility}
+              onChange={(e) =>
+                setVisibility(e.target.value)
+              }
+              className="
+                border
+                w-full
+                p-3
+                rounded-lg
+                focus:outline-none
+                focus:ring-2
+                focus:ring-blue-500
+              "
+            >
+              <option value="Public">
+                🌍 Public
+              </option>
+
+              <option value="Private">
+                🔒 Private
+              </option>
+            </select>
+
+            <p className="text-sm text-gray-500 mt-2">
+              Jika memilih <b>Private</b>, portfolio Anda tidak dapat diakses oleh pengguna lain.
+            </p>
+
+          </div>
 
           <button
-
             type="submit"
-
             className="
               bg-blue-600
               text-white
@@ -397,20 +344,13 @@ export default function EditProfilePage() {
               hover:bg-blue-700
               transition
             "
-
           >
-
             Simpan Profile
-
           </button>
-
-
 
         </form>
 
-
       </div>
-
 
     </div>
 

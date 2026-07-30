@@ -25,49 +25,119 @@ interface Portfolio {
 }
 
 export default function PortfolioDetailPage() {
+
   const params = useParams();
 
   const id = params.id;
 
-  const [data, setData] = useState<Portfolio | null>(null);
+  const [data, setData] =
+    useState<Portfolio | null>(null);
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] =
+    useState(true);
+
+  const [isPrivate, setIsPrivate] =
+    useState(false);
 
   useEffect(() => {
+
     getPortfolio();
+
   }, []);
 
   async function getPortfolio() {
+
     try {
-      const res = await fetch(`/api/portfolio/${id}`);
+
+      const res = await fetch(
+        `/api/portfolio/${id}`
+      );
 
       const result = await res.json();
 
+      if (result.private) {
+
+        setIsPrivate(true);
+
+        return;
+
+      }
+
       setData(result);
+
     } catch (error) {
+
       console.log(error);
+
     } finally {
+
       setLoading(false);
+
     }
+
   }
 
   if (loading) {
+
     return (
+
       <div className="h-screen flex justify-center items-center text-xl">
+
         Loading...
+
       </div>
+
     );
+
+  }
+
+  if (isPrivate) {
+
+    return (
+
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+
+        <div className="bg-white rounded-2xl shadow-xl p-10 text-center max-w-lg">
+
+          <div className="text-7xl mb-5">
+            🔒
+          </div>
+
+          <h1 className="text-3xl font-bold">
+            Portfolio Private
+          </h1>
+
+          <p className="text-gray-600 mt-5 leading-8">
+            Portfolio ini bersifat <b>Private</b>.
+            <br />
+            Pemilik portfolio tidak mengizinkan
+            portfolio ini untuk dilihat oleh publik.
+          </p>
+
+        </div>
+
+      </div>
+
+    );
+
   }
 
   if (!data) {
+
     return (
+
       <div className="h-screen flex justify-center items-center text-xl">
+
         Portfolio tidak ditemukan.
+
       </div>
+
     );
+
   }
 
   return (
+
     <div className="max-w-6xl mx-auto py-12 px-6">
 
       {/* ===========================
@@ -183,7 +253,8 @@ export default function PortfolioDetailPage() {
         </div>
 
       </div>
-            {/* ===========================
+
+      {/* ===========================
           SKILL
       ============================ */}
 
@@ -194,16 +265,22 @@ export default function PortfolioDetailPage() {
         </h2>
 
         {data.skill.length === 0 ? (
+
           <p className="text-gray-500">
             Belum ada skill.
           </p>
+
         ) : (
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+
             {data.skill.map((skill: any) => (
+
               <div
                 key={skill.id}
                 className="border rounded-lg p-4 hover:shadow-md transition"
               >
+
                 <p className="text-sm text-blue-700 font-semibold">
                   {skill.category}
                 </p>
@@ -215,9 +292,13 @@ export default function PortfolioDetailPage() {
                 <span className="inline-block mt-3 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
                   {skill.level_skill || "-"}
                 </span>
+
               </div>
+
             ))}
+
           </div>
+
         )}
 
       </div>
@@ -233,13 +314,17 @@ export default function PortfolioDetailPage() {
         </h2>
 
         {data.experience.length === 0 ? (
+
           <p className="text-gray-500">
             Belum ada pengalaman organisasi.
           </p>
+
         ) : (
+
           <div className="space-y-6">
 
             {data.experience.map((exp: any) => (
+
               <div
                 key={exp.id}
                 className="border-l-4 border-blue-700 pl-5"
@@ -272,14 +357,16 @@ export default function PortfolioDetailPage() {
                 </p>
 
               </div>
+
             ))}
 
           </div>
+
         )}
 
       </div>
 
-            {/* ===========================
+      {/* ===========================
           PROJECT
       ============================ */}
 
@@ -290,17 +377,22 @@ export default function PortfolioDetailPage() {
         </h2>
 
         {data.project.length === 0 ? (
+
           <p className="text-gray-500">
             Belum ada project.
           </p>
+
         ) : (
+
           <div className="grid md:grid-cols-2 gap-6">
 
             {data.project.map((project: any) => (
+
               <div
                 key={project.id}
                 className="border rounded-xl overflow-hidden hover:shadow-lg transition"
               >
+
                 <Image
                   src={project.image || "/default-project.png"}
                   alt={project.title}
@@ -324,12 +416,14 @@ export default function PortfolioDetailPage() {
                     {project.tech_stack
                       ?.split(",")
                       .map((tech: string, index: number) => (
+
                         <span
                           key={index}
                           className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm"
                         >
                           {tech.trim()}
                         </span>
+
                       ))}
 
                   </div>
@@ -337,6 +431,7 @@ export default function PortfolioDetailPage() {
                   <div className="mt-6 flex gap-3">
 
                     {project.github && (
+
                       <a
                         href={project.github}
                         target="_blank"
@@ -344,9 +439,11 @@ export default function PortfolioDetailPage() {
                       >
                         Github
                       </a>
+
                     )}
 
                     {project.demo && (
+
                       <a
                         href={project.demo}
                         target="_blank"
@@ -354,6 +451,7 @@ export default function PortfolioDetailPage() {
                       >
                         Live Demo
                       </a>
+
                     )}
 
                   </div>
@@ -361,9 +459,11 @@ export default function PortfolioDetailPage() {
                 </div>
 
               </div>
+
             ))}
 
           </div>
+
         )}
 
       </div>
@@ -379,17 +479,22 @@ export default function PortfolioDetailPage() {
         </h2>
 
         {data.certificate.length === 0 ? (
+
           <p className="text-gray-500">
             Belum ada sertifikat.
           </p>
+
         ) : (
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
 
             {data.certificate.map((certificate: any) => (
+
               <div
                 key={certificate.id}
                 className="border rounded-xl overflow-hidden hover:shadow-lg transition"
               >
+
                 <Image
                   src={certificate.image || "/default-certificate.jpg"}
                   alt={certificate.title}
@@ -415,13 +520,17 @@ export default function PortfolioDetailPage() {
                 </div>
 
               </div>
+
             ))}
 
           </div>
+
         )}
 
       </div>
 
     </div>
+
   );
+
 }

@@ -48,8 +48,26 @@ export async function GET(
       );
     }
 
+    // ===============================
+    // CEK VISIBILITY
+    // ===============================
+
+    if (user.visibility === "Private") {
+      return NextResponse.json(
+        {
+          private: true,
+          message: "Portfolio ini bersifat private.",
+        },
+        {
+          status: 403,
+        }
+      );
+    }
+
     return NextResponse.json(user);
+
   } catch (error) {
+
     console.log(error);
 
     return NextResponse.json(
@@ -60,5 +78,6 @@ export async function GET(
         status: 500,
       }
     );
+
   }
 }
